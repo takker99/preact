@@ -1,4 +1,4 @@
-import { options } from 'preact';
+import { options } from "preact";
 
 /** @type {number} */
 let currentIndex;
@@ -21,69 +21,69 @@ let oldBeforeUnmount = options.unmount;
 const RAF_TIMEOUT = 100;
 let prevRaf;
 
-options._diff = vnode => {
-	currentComponent = null;
-	if (oldBeforeDiff) oldBeforeDiff(vnode);
+options._diff = (vnode) => {
+  currentComponent = null;
+  if (oldBeforeDiff) oldBeforeDiff(vnode);
 };
 
-options._render = vnode => {
-	if (oldBeforeRender) oldBeforeRender(vnode);
+options._render = (vnode) => {
+  if (oldBeforeRender) oldBeforeRender(vnode);
 
-	currentComponent = vnode._component;
-	currentIndex = 0;
+  currentComponent = vnode._component;
+  currentIndex = 0;
 
-	const hooks = currentComponent.__hooks;
-	if (hooks) {
-		hooks._pendingEffects.forEach(invokeCleanup);
-		hooks._pendingEffects.forEach(invokeEffect);
-		hooks._pendingEffects = [];
-	}
+  const hooks = currentComponent.__hooks;
+  if (hooks) {
+    hooks._pendingEffects.forEach(invokeCleanup);
+    hooks._pendingEffects.forEach(invokeEffect);
+    hooks._pendingEffects = [];
+  }
 };
 
-options.diffed = vnode => {
-	if (oldAfterDiff) oldAfterDiff(vnode);
+options.diffed = (vnode) => {
+  if (oldAfterDiff) oldAfterDiff(vnode);
 
-	const c = vnode._component;
-	if (c && c.__hooks && c.__hooks._pendingEffects.length) {
-		afterPaint(afterPaintEffects.push(c));
-	}
-	currentComponent = null;
+  const c = vnode._component;
+  if (c && c.__hooks && c.__hooks._pendingEffects.length) {
+    afterPaint(afterPaintEffects.push(c));
+  }
+  currentComponent = null;
 };
 
 options._commit = (vnode, commitQueue) => {
-	commitQueue.some(component => {
-		try {
-			component._renderCallbacks.forEach(invokeCleanup);
-			component._renderCallbacks = component._renderCallbacks.filter(cb =>
-				cb._value ? invokeEffect(cb) : true
-			);
-		} catch (e) {
-			commitQueue.some(c => {
-				if (c._renderCallbacks) c._renderCallbacks = [];
-			});
-			commitQueue = [];
-			options._catchError(e, component._vnode);
-		}
-	});
+  commitQueue.some((component) => {
+    try {
+      component._renderCallbacks.forEach(invokeCleanup);
+      component._renderCallbacks = component._renderCallbacks.filter((cb) =>
+        cb._value ? invokeEffect(cb) : true
+      );
+    } catch (e) {
+      commitQueue.some((c) => {
+        if (c._renderCallbacks) c._renderCallbacks = [];
+      });
+      commitQueue = [];
+      options._catchError(e, component._vnode);
+    }
+  });
 
-	if (oldCommit) oldCommit(vnode, commitQueue);
+  if (oldCommit) oldCommit(vnode, commitQueue);
 };
 
-options.unmount = vnode => {
-	if (oldBeforeUnmount) oldBeforeUnmount(vnode);
+options.unmount = (vnode) => {
+  if (oldBeforeUnmount) oldBeforeUnmount(vnode);
 
-	const c = vnode._component;
-	if (c && c.__hooks) {
-		let hasErrored;
-		c.__hooks._list.forEach(s => {
-			try {
-				invokeCleanup(s);
-			} catch (e) {
-				hasErrored = e;
-			}
-		});
-		if (hasErrored) options._catchError(hasErrored, c._vnode);
-	}
+  const c = vnode._component;
+  if (c && c.__hooks) {
+    let hasErrored;
+    c.__hooks._list.forEach((s) => {
+      try {
+        invokeCleanup(s);
+      } catch (e) {
+        hasErrored = e;
+      }
+    });
+    if (hasErrored) options._catchError(hasErrored, c._vnode);
+  }
 };
 
 /**
@@ -93,35 +93,34 @@ options.unmount = vnode => {
  * @returns {any}
  */
 function getHookState(index, type) {
-	if (options._hook) {
-		options._hook(currentComponent, index, currentHook || type);
-	}
-	currentHook = 0;
+  if (options._hook) {
+    options._hook(currentComponent, index, currentHook || type);
+  }
+  currentHook = 0;
 
-	// Largely inspired by:
-	// * https://github.com/michael-klein/funcy.js/blob/f6be73468e6ec46b0ff5aa3cc4c9baf72a29025a/src/hooks/core_hooks.mjs
-	// * https://github.com/michael-klein/funcy.js/blob/650beaa58c43c33a74820a3c98b3c7079cf2e333/src/renderer.mjs
-	// Other implementations to look at:
-	// * https://codesandbox.io/s/mnox05qp8
-	const hooks =
-		currentComponent.__hooks ||
-		(currentComponent.__hooks = {
-			_list: [],
-			_pendingEffects: []
-		});
+  // Largely inspired by:
+  // * https://github.com/michael-klein/funcy.js/blob/f6be73468e6ec46b0ff5aa3cc4c9baf72a29025a/src/hooks/core_hooks.mjs
+  // * https://github.com/michael-klein/funcy.js/blob/650beaa58c43c33a74820a3c98b3c7079cf2e333/src/renderer.mjs
+  // Other implementations to look at:
+  // * https://codesandbox.io/s/mnox05qp8
+  const hooks = currentComponent.__hooks ||
+    (currentComponent.__hooks = {
+      _list: [],
+      _pendingEffects: [],
+    });
 
-	if (index >= hooks._list.length) {
-		hooks._list.push({});
-	}
-	return hooks._list[index];
+  if (index >= hooks._list.length) {
+    hooks._list.push({});
+  }
+  return hooks._list[index];
 }
 
 /**
  * @param {import('./index').StateUpdater<any>} [initialState]
  */
 export function useState(initialState) {
-	currentHook = 1;
-	return useReducer(invokeOrReturn, initialState);
+  currentHook = 1;
+  return useReducer(invokeOrReturn, initialState);
 }
 
 /**
@@ -131,26 +130,26 @@ export function useState(initialState) {
  * @returns {[ any, (state: any) => void ]}
  */
 export function useReducer(reducer, initialState, init) {
-	/** @type {import('./internal').ReducerHookState} */
-	const hookState = getHookState(currentIndex++, 2);
-	hookState._reducer = reducer;
-	if (!hookState._component) {
-		hookState._value = [
-			!init ? invokeOrReturn(undefined, initialState) : init(initialState),
+  /** @type {import('./internal').ReducerHookState} */
+  const hookState = getHookState(currentIndex++, 2);
+  hookState._reducer = reducer;
+  if (!hookState._component) {
+    hookState._value = [
+      !init ? invokeOrReturn(undefined, initialState) : init(initialState),
 
-			action => {
-				const nextValue = hookState._reducer(hookState._value[0], action);
-				if (hookState._value[0] !== nextValue) {
-					hookState._value = [nextValue, hookState._value[1]];
-					hookState._component.setState({});
-				}
-			}
-		];
+      (action) => {
+        const nextValue = hookState._reducer(hookState._value[0], action);
+        if (hookState._value[0] !== nextValue) {
+          hookState._value = [nextValue, hookState._value[1]];
+          hookState._component.setState({});
+        }
+      },
+    ];
 
-		hookState._component = currentComponent;
-	}
+    hookState._component = currentComponent;
+  }
 
-	return hookState._value;
+  return hookState._value;
 }
 
 /**
@@ -158,14 +157,14 @@ export function useReducer(reducer, initialState, init) {
  * @param {any[]} args
  */
 export function useEffect(callback, args) {
-	/** @type {import('./internal').EffectHookState} */
-	const state = getHookState(currentIndex++, 3);
-	if (!options._skipEffects && argsChanged(state._args, args)) {
-		state._value = callback;
-		state._args = args;
+  /** @type {import('./internal').EffectHookState} */
+  const state = getHookState(currentIndex++, 3);
+  if (!options._skipEffects && argsChanged(state._args, args)) {
+    state._value = callback;
+    state._args = args;
 
-		currentComponent.__hooks._pendingEffects.push(state);
-	}
+    currentComponent.__hooks._pendingEffects.push(state);
+  }
 }
 
 /**
@@ -173,19 +172,19 @@ export function useEffect(callback, args) {
  * @param {any[]} args
  */
 export function useLayoutEffect(callback, args) {
-	/** @type {import('./internal').EffectHookState} */
-	const state = getHookState(currentIndex++, 4);
-	if (!options._skipEffects && argsChanged(state._args, args)) {
-		state._value = callback;
-		state._args = args;
+  /** @type {import('./internal').EffectHookState} */
+  const state = getHookState(currentIndex++, 4);
+  if (!options._skipEffects && argsChanged(state._args, args)) {
+    state._value = callback;
+    state._args = args;
 
-		currentComponent._renderCallbacks.push(state);
-	}
+    currentComponent._renderCallbacks.push(state);
+  }
 }
 
 export function useRef(initialValue) {
-	currentHook = 5;
-	return useMemo(() => ({ current: initialValue }), []);
+  currentHook = 5;
+  return useMemo(() => ({ current: initialValue }), []);
 }
 
 /**
@@ -194,14 +193,14 @@ export function useRef(initialValue) {
  * @param {any[]} args
  */
 export function useImperativeHandle(ref, createHandle, args) {
-	currentHook = 6;
-	useLayoutEffect(
-		() => {
-			if (typeof ref == 'function') ref(createHandle());
-			else if (ref) ref.current = createHandle();
-		},
-		args == null ? args : args.concat(ref)
-	);
+  currentHook = 6;
+  useLayoutEffect(
+    () => {
+      if (typeof ref == "function") ref(createHandle());
+      else if (ref) ref.current = createHandle();
+    },
+    args == null ? args : args.concat(ref),
+  );
 }
 
 /**
@@ -209,15 +208,15 @@ export function useImperativeHandle(ref, createHandle, args) {
  * @param {any[]} args
  */
 export function useMemo(factory, args) {
-	/** @type {import('./internal').MemoHookState} */
-	const state = getHookState(currentIndex++, 7);
-	if (argsChanged(state._args, args)) {
-		state._value = factory();
-		state._args = args;
-		state._factory = factory;
-	}
+  /** @type {import('./internal').MemoHookState} */
+  const state = getHookState(currentIndex++, 7);
+  if (argsChanged(state._args, args)) {
+    state._value = factory();
+    state._args = args;
+    state._factory = factory;
+  }
 
-	return state._value;
+  return state._value;
 }
 
 /**
@@ -225,31 +224,31 @@ export function useMemo(factory, args) {
  * @param {any[]} args
  */
 export function useCallback(callback, args) {
-	currentHook = 8;
-	return useMemo(() => callback, args);
+  currentHook = 8;
+  return useMemo(() => callback, args);
 }
 
 /**
  * @param {import('./internal').PreactContext} context
  */
 export function useContext(context) {
-	const provider = currentComponent.context[context._id];
-	// We could skip this call here, but than we'd not call
-	// `options._hook`. We need to do that in order to make
-	// the devtools aware of this hook.
-	/** @type {import('./internal').ContextHookState} */
-	const state = getHookState(currentIndex++, 9);
-	// The devtools needs access to the context object to
-	// be able to pull of the default value when no provider
-	// is present in the tree.
-	state._context = context;
-	if (!provider) return context._defaultValue;
-	// This is probably not safe to convert to "!"
-	if (state._value == null) {
-		state._value = true;
-		provider.sub(currentComponent);
-	}
-	return provider.props.value;
+  const provider = currentComponent.context[context._id];
+  // We could skip this call here, but than we'd not call
+  // `options._hook`. We need to do that in order to make
+  // the devtools aware of this hook.
+  /** @type {import('./internal').ContextHookState} */
+  const state = getHookState(currentIndex++, 9);
+  // The devtools needs access to the context object to
+  // be able to pull of the default value when no provider
+  // is present in the tree.
+  state._context = context;
+  if (!provider) return context._defaultValue;
+  // This is probably not safe to convert to "!"
+  if (state._value == null) {
+    state._value = true;
+    provider.sub(currentComponent);
+  }
+  return provider.props.value;
 }
 
 /**
@@ -257,53 +256,53 @@ export function useContext(context) {
  * @type {<T>(value: T, cb?: (value: T) => string | number) => void}
  */
 export function useDebugValue(value, formatter) {
-	if (options.useDebugValue) {
-		options.useDebugValue(formatter ? formatter(value) : value);
-	}
+  if (options.useDebugValue) {
+    options.useDebugValue(formatter ? formatter(value) : value);
+  }
 }
 
 /**
  * @param {(error: any) => void} cb
  */
 export function useErrorBoundary(cb) {
-	/** @type {import('./internal').ErrorBoundaryHookState} */
-	const state = getHookState(currentIndex++, 10);
-	const errState = useState();
-	state._value = cb;
-	if (!currentComponent.componentDidCatch) {
-		currentComponent.componentDidCatch = err => {
-			if (state._value) state._value(err);
-			errState[1](err);
-		};
-	}
-	return [
-		errState[0],
-		() => {
-			errState[1](undefined);
-		}
-	];
+  /** @type {import('./internal').ErrorBoundaryHookState} */
+  const state = getHookState(currentIndex++, 10);
+  const errState = useState();
+  state._value = cb;
+  if (!currentComponent.componentDidCatch) {
+    currentComponent.componentDidCatch = (err) => {
+      if (state._value) state._value(err);
+      errState[1](err);
+    };
+  }
+  return [
+    errState[0],
+    () => {
+      errState[1](undefined);
+    },
+  ];
 }
 
 /**
  * After paint effects consumer.
  */
 function flushAfterPaintEffects() {
-	afterPaintEffects.forEach(component => {
-		if (component._parentDom) {
-			try {
-				component.__hooks._pendingEffects.forEach(invokeCleanup);
-				component.__hooks._pendingEffects.forEach(invokeEffect);
-				component.__hooks._pendingEffects = [];
-			} catch (e) {
-				component.__hooks._pendingEffects = [];
-				options._catchError(e, component._vnode);
-			}
-		}
-	});
-	afterPaintEffects = [];
+  afterPaintEffects.forEach((component) => {
+    if (component._parentDom) {
+      try {
+        component.__hooks._pendingEffects.forEach(invokeCleanup);
+        component.__hooks._pendingEffects.forEach(invokeEffect);
+        component.__hooks._pendingEffects = [];
+      } catch (e) {
+        component.__hooks._pendingEffects = [];
+        options._catchError(e, component._vnode);
+      }
+    }
+  });
+  afterPaintEffects = [];
 }
 
-let HAS_RAF = typeof requestAnimationFrame == 'function';
+let HAS_RAF = typeof requestAnimationFrame == "function";
 
 /**
  * Schedule a callback to be invoked after the browser has a chance to paint a new frame.
@@ -316,17 +315,17 @@ let HAS_RAF = typeof requestAnimationFrame == 'function';
  * @param {() => void} callback
  */
 function afterNextFrame(callback) {
-	const done = () => {
-		clearTimeout(timeout);
-		if (HAS_RAF) cancelAnimationFrame(raf);
-		setTimeout(callback);
-	};
-	const timeout = setTimeout(done, RAF_TIMEOUT);
+  const done = () => {
+    clearTimeout(timeout);
+    if (HAS_RAF) cancelAnimationFrame(raf);
+    setTimeout(callback);
+  };
+  const timeout = setTimeout(done, RAF_TIMEOUT);
 
-	let raf;
-	if (HAS_RAF) {
-		raf = requestAnimationFrame(done);
-	}
+  let raf;
+  if (HAS_RAF) {
+    raf = requestAnimationFrame(done);
+  }
 }
 
 // Note: if someone used options.debounceRendering = requestAnimationFrame,
@@ -337,25 +336,25 @@ function afterNextFrame(callback) {
  * @param {number} newQueueLength
  */
 function afterPaint(newQueueLength) {
-	if (newQueueLength === 1 || prevRaf !== options.requestAnimationFrame) {
-		prevRaf = options.requestAnimationFrame;
-		(prevRaf || afterNextFrame)(flushAfterPaintEffects);
-	}
+  if (newQueueLength === 1 || prevRaf !== options.requestAnimationFrame) {
+    prevRaf = options.requestAnimationFrame;
+    (prevRaf || afterNextFrame)(flushAfterPaintEffects);
+  }
 }
 
 /**
  * @param {import('./internal').EffectHookState} hook
  */
 function invokeCleanup(hook) {
-	// A hook cleanup can introduce a call to render which creates a new root, this will call options.vnode
-	// and move the currentComponent away.
-	const comp = currentComponent;
-	let cleanup = hook._cleanup;
-	if (typeof cleanup == 'function') {
-		hook._cleanup = undefined;
-		cleanup();
-	}
-	currentComponent = comp;
+  // A hook cleanup can introduce a call to render which creates a new root, this will call options.vnode
+  // and move the currentComponent away.
+  const comp = currentComponent;
+  let cleanup = hook._cleanup;
+  if (typeof cleanup == "function") {
+    hook._cleanup = undefined;
+    cleanup();
+  }
+  currentComponent = comp;
 }
 
 /**
@@ -363,11 +362,11 @@ function invokeCleanup(hook) {
  * @param {import('./internal').EffectHookState} hook
  */
 function invokeEffect(hook) {
-	// A hook call can introduce a call to render which creates a new root, this will call options.vnode
-	// and move the currentComponent away.
-	const comp = currentComponent;
-	hook._cleanup = hook._value();
-	currentComponent = comp;
+  // A hook call can introduce a call to render which creates a new root, this will call options.vnode
+  // and move the currentComponent away.
+  const comp = currentComponent;
+  hook._cleanup = hook._value();
+  currentComponent = comp;
 }
 
 /**
@@ -375,13 +374,13 @@ function invokeEffect(hook) {
  * @param {any[]} newArgs
  */
 function argsChanged(oldArgs, newArgs) {
-	return (
-		!oldArgs ||
-		oldArgs.length !== newArgs.length ||
-		newArgs.some((arg, index) => arg !== oldArgs[index])
-	);
+  return (
+    !oldArgs ||
+    oldArgs.length !== newArgs.length ||
+    newArgs.some((arg, index) => arg !== oldArgs[index])
+  );
 }
 
 function invokeOrReturn(arg, f) {
-	return typeof f == 'function' ? f(arg) : f;
+  return typeof f == "function" ? f(arg) : f;
 }

@@ -1,4 +1,4 @@
-const ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+const ReactPropTypesSecret = "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED";
 
 let loggedTypeFailures = {};
 
@@ -6,7 +6,7 @@ let loggedTypeFailures = {};
  * Reset the history of which prop type warnings have been logged.
  */
 export function resetPropWarnings() {
-	loggedTypeFailures = {};
+  loggedTypeFailures = {};
 }
 
 /**
@@ -22,33 +22,35 @@ export function resetPropWarnings() {
  * @param {?Function} getStack Returns the component stack.
  */
 export function checkPropTypes(
-	typeSpecs,
-	values,
-	location,
-	componentName,
-	getStack
+  typeSpecs,
+  values,
+  location,
+  componentName,
+  getStack,
 ) {
-	Object.keys(typeSpecs).forEach(typeSpecName => {
-		let error;
-		try {
-			error = typeSpecs[typeSpecName](
-				values,
-				typeSpecName,
-				componentName,
-				location,
-				null,
-				ReactPropTypesSecret
-			);
-		} catch (e) {
-			error = e;
-		}
-		if (error && !(error.message in loggedTypeFailures)) {
-			loggedTypeFailures[error.message] = true;
-			console.error(
-				`Failed ${location} type: ${error.message}${(getStack &&
-					`\n${getStack()}`) ||
-					''}`
-			);
-		}
-	});
+  Object.keys(typeSpecs).forEach((typeSpecName) => {
+    let error;
+    try {
+      error = typeSpecs[typeSpecName](
+        values,
+        typeSpecName,
+        componentName,
+        location,
+        null,
+        ReactPropTypesSecret,
+      );
+    } catch (e) {
+      error = e;
+    }
+    if (error && !(error.message in loggedTypeFailures)) {
+      loggedTypeFailures[error.message] = true;
+      console.error(
+        `Failed ${location} type: ${error.message}${
+          (getStack &&
+            `\n${getStack()}`) ||
+          ""
+        }`,
+      );
+    }
+  });
 }

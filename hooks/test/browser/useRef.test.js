@@ -1,50 +1,50 @@
-import { createElement, render } from 'preact';
-import { setupScratch, teardown } from '../../../test/_util/helpers';
-import { useRef } from 'preact/hooks';
+import { createElement, render } from "preact";
+import { setupScratch, teardown } from "../../../test/_util/helpers";
+import { useRef } from "preact/hooks";
 
 /** @jsx createElement */
 
-describe('useRef', () => {
-	/** @type {HTMLDivElement} */
-	let scratch;
+describe("useRef", () => {
+  /** @type {HTMLDivElement} */
+  let scratch;
 
-	beforeEach(() => {
-		scratch = setupScratch();
-	});
+  beforeEach(() => {
+    scratch = setupScratch();
+  });
 
-	afterEach(() => {
-		teardown(scratch);
-	});
+  afterEach(() => {
+    teardown(scratch);
+  });
 
-	it('provides a stable reference', () => {
-		const values = [];
+  it("provides a stable reference", () => {
+    const values = [];
 
-		function Comp() {
-			const ref = useRef(1);
-			values.push(ref.current);
-			ref.current = 2;
-			return null;
-		}
+    function Comp() {
+      const ref = useRef(1);
+      values.push(ref.current);
+      ref.current = 2;
+      return null;
+    }
 
-		render(<Comp />, scratch);
-		render(<Comp />, scratch);
+    render(<Comp />, scratch);
+    render(<Comp />, scratch);
 
-		expect(values).to.deep.equal([1, 2]);
-	});
+    expect(values).to.deep.equal([1, 2]);
+  });
 
-	it('defaults to undefined', () => {
-		const values = [];
+  it("defaults to undefined", () => {
+    const values = [];
 
-		function Comp() {
-			const ref = useRef();
-			values.push(ref.current);
-			ref.current = 2;
-			return null;
-		}
+    function Comp() {
+      const ref = useRef();
+      values.push(ref.current);
+      ref.current = 2;
+      return null;
+    }
 
-		render(<Comp />, scratch);
-		render(<Comp />, scratch);
+    render(<Comp />, scratch);
+    render(<Comp />, scratch);
 
-		expect(values).to.deep.equal([undefined, 2]);
-	});
+    expect(values).to.deep.equal([undefined, 2]);
+  });
 });

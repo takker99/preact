@@ -1,4 +1,4 @@
 export {
-	renderToString,
-	renderToString as renderToStaticMarkup
-} from 'preact-render-to-string';
+  renderToString,
+  renderToString as renderToStaticMarkup,
+} from "preact-render-to-string";

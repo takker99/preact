@@ -17,7 +17,7 @@ export var unstable_IdlePriority = 5;
  * @param {() => void} callback
  */
 export function unstable_runWithPriority(priority, callback) {
-	return callback();
+  return callback();
 }
 
 export var unstable_now = performance.now.bind(performance);

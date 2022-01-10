@@ -1,46 +1,46 @@
 import {
-	createElement,
-	render as preactRender,
-	cloneElement as preactCloneElement,
-	createRef,
-	Component,
-	createContext,
-	Fragment
-} from 'preact';
+  cloneElement as preactCloneElement,
+  Component,
+  createContext,
+  createElement,
+  createRef,
+  Fragment,
+  render as preactRender,
+} from "preact";
 import {
-	useState,
-	useReducer,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useImperativeHandle,
-	useMemo,
-	useCallback,
-	useContext,
-	useDebugValue
-} from 'preact/hooks';
-import { PureComponent } from './PureComponent';
-import { memo } from './memo';
-import { forwardRef } from './forwardRef';
-import { Children } from './Children';
-import { Suspense, lazy } from './suspense';
-import { SuspenseList } from './suspense-list';
-import { createPortal } from './portals';
+  useCallback,
+  useContext,
+  useDebugValue,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "preact/hooks";
+import { PureComponent } from "./PureComponent";
+import { memo } from "./memo";
+import { forwardRef } from "./forwardRef";
+import { Children } from "./Children";
+import { lazy, Suspense } from "./suspense";
+import { SuspenseList } from "./suspense-list";
+import { createPortal } from "./portals";
 import {
-	hydrate,
-	render,
-	REACT_ELEMENT_TYPE,
-	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-} from './render';
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
+  hydrate,
+  REACT_ELEMENT_TYPE,
+  render,
+} from "./render";
 
-const version = '17.0.2'; // trick libraries to think we are react
+const version = "17.0.2"; // trick libraries to think we are react
 
 /**
  * Legacy version of createElement.
  * @param {import('./internal').VNode["type"]} type The node name or Component constructor
  */
 function createFactory(type) {
-	return createElement.bind(null, type);
+  return createElement.bind(null, type);
 }
 
 /**
@@ -49,7 +49,7 @@ function createFactory(type) {
  * @returns {boolean}
  */
 function isValidElement(element) {
-	return !!element && element.$$typeof === REACT_ELEMENT_TYPE;
+  return !!element && element.$$typeof === REACT_ELEMENT_TYPE;
 }
 
 /**
@@ -60,8 +60,8 @@ function isValidElement(element) {
  * @param {Array<import('./internal').ComponentChildren>} rest Optional component children
  */
 function cloneElement(element) {
-	if (!isValidElement(element)) return element;
-	return preactCloneElement.apply(null, arguments);
+  if (!isValidElement(element)) return element;
+  return preactCloneElement.apply(null, arguments);
 }
 
 /**
@@ -70,11 +70,11 @@ function cloneElement(element) {
  * @returns {boolean}
  */
 function unmountComponentAtNode(container) {
-	if (container._children) {
-		preactRender(null, container);
-		return true;
-	}
-	return false;
+  if (container._children) {
+    preactRender(null, container);
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -83,11 +83,11 @@ function unmountComponentAtNode(container) {
  * @returns {import('./internal').PreactElement | null}
  */
 function findDOMNode(component) {
-	return (
-		(component &&
-			(component.base || (component.nodeType === 1 && component))) ||
-		null
-	);
+  return (
+    (component &&
+      (component.base || (component.nodeType === 1 && component))) ||
+    null
+  );
 }
 
 /**
@@ -117,71 +117,71 @@ const flushSync = (callback, arg) => callback(arg);
  */
 const StrictMode = Fragment;
 
-export * from 'preact/hooks';
+export * from "preact/hooks";
 export {
-	version,
-	Children,
-	render,
-	hydrate,
-	unmountComponentAtNode,
-	createPortal,
-	createElement,
-	createContext,
-	createFactory,
-	cloneElement,
-	createRef,
-	Fragment,
-	isValidElement,
-	findDOMNode,
-	Component,
-	PureComponent,
-	memo,
-	forwardRef,
-	flushSync,
-	// eslint-disable-next-line camelcase
-	unstable_batchedUpdates,
-	StrictMode,
-	Suspense,
-	SuspenseList,
-	lazy,
-	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
+  Children,
+  cloneElement,
+  Component,
+  createContext,
+  createElement,
+  createFactory,
+  createPortal,
+  createRef,
+  findDOMNode,
+  flushSync,
+  forwardRef,
+  Fragment,
+  hydrate,
+  isValidElement,
+  lazy,
+  memo,
+  PureComponent,
+  render,
+  StrictMode,
+  Suspense,
+  SuspenseList,
+  unmountComponentAtNode,
+  // eslint-disable-next-line camelcase
+  unstable_batchedUpdates,
+  version,
 };
 
 // React copies the named exports to the default one.
 export default {
-	useState,
-	useReducer,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useImperativeHandle,
-	useMemo,
-	useCallback,
-	useContext,
-	useDebugValue,
-	version,
-	Children,
-	render,
-	hydrate,
-	unmountComponentAtNode,
-	createPortal,
-	createElement,
-	createContext,
-	createFactory,
-	cloneElement,
-	createRef,
-	Fragment,
-	isValidElement,
-	findDOMNode,
-	Component,
-	PureComponent,
-	memo,
-	forwardRef,
-	flushSync,
-	unstable_batchedUpdates,
-	StrictMode,
-	Suspense,
-	SuspenseList,
-	lazy,
-	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+  useState,
+  useReducer,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useImperativeHandle,
+  useMemo,
+  useCallback,
+  useContext,
+  useDebugValue,
+  version,
+  Children,
+  render,
+  hydrate,
+  unmountComponentAtNode,
+  createPortal,
+  createElement,
+  createContext,
+  createFactory,
+  cloneElement,
+  createRef,
+  Fragment,
+  isValidElement,
+  findDOMNode,
+  Component,
+  PureComponent,
+  memo,
+  forwardRef,
+  flushSync,
+  unstable_batchedUpdates,
+  StrictMode,
+  Suspense,
+  SuspenseList,
+  lazy,
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
 };

@@ -1,10 +1,10 @@
-import { options as rawOptions } from 'preact';
+import { options as rawOptions } from "preact";
 
 /** @type {import('preact/src/internal').Options} */
 let options = rawOptions;
 
 let oldVNode = options.vnode;
-let oldEvent = options.event || (e => e);
+let oldEvent = options.event || ((e) => e);
 let oldAfterDiff = options.diffed;
 let oldUnmount = options.unmount;
 

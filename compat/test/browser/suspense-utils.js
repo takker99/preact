@@ -1,4 +1,4 @@
-import React, { Component, lazy } from 'preact/compat';
+import React, { Component, lazy } from "preact/compat";
 
 const h = React.createElement;
 
@@ -31,25 +31,25 @@ const h = React.createElement;
  * @returns {[typeof Component, (c: ComponentType) => Promise<void>, (e: Error) => Promise<void>]}
  */
 export function createLazy() {
-	/** @type {(c: ComponentType) => Promise<void>} */
-	let resolver, rejecter;
-	const Lazy = lazy(() => {
-		let promise = new Promise((resolve, reject) => {
-			resolver = c => {
-				resolve({ default: c });
-				return promise;
-			};
+  /** @type {(c: ComponentType) => Promise<void>} */
+  let resolver, rejecter;
+  const Lazy = lazy(() => {
+    let promise = new Promise((resolve, reject) => {
+      resolver = (c) => {
+        resolve({ default: c });
+        return promise;
+      };
 
-			rejecter = e => {
-				reject(e);
-				return promise;
-			};
-		});
+      rejecter = (e) => {
+        reject(e);
+        return promise;
+      };
+    });
 
-		return promise;
-	});
+    return promise;
+  });
 
-	return [Lazy, c => resolver(c), e => rejecter(e)];
+  return [Lazy, (c) => resolver(c), (e) => rejecter(e)];
 }
 
 /**
@@ -86,31 +86,31 @@ export function createLazy() {
  * @returns {[typeof Suspender, () => Resolvers]}
  */
 export function createSuspender(DefaultComponent) {
-	/** @type {(lazy: typeof Component) => void} */
-	let renderLazy;
-	class Suspender extends Component {
-		constructor(props, context) {
-			super(props, context);
-			this.state = { Lazy: null };
+  /** @type {(lazy: typeof Component) => void} */
+  let renderLazy;
+  class Suspender extends Component {
+    constructor(props, context) {
+      super(props, context);
+      this.state = { Lazy: null };
 
-			renderLazy = Lazy => this.setState({ Lazy });
-		}
+      renderLazy = (Lazy) => this.setState({ Lazy });
+    }
 
-		render(props, state) {
-			return state.Lazy ? h(state.Lazy, props) : h(DefaultComponent, props);
-		}
-	}
+    render(props, state) {
+      return state.Lazy ? h(state.Lazy, props) : h(DefaultComponent, props);
+    }
+  }
 
-	sinon.spy(Suspender.prototype, 'render');
+  sinon.spy(Suspender.prototype, "render");
 
-	/**
-	 * @returns {Resolvers}
-	 */
-	function suspend() {
-		const [Lazy, resolve, reject] = createLazy();
-		renderLazy(Lazy);
-		return [resolve, reject];
-	}
+  /**
+   * @returns {Resolvers}
+   */
+  function suspend() {
+    const [Lazy, resolve, reject] = createLazy();
+    renderLazy(Lazy);
+    return [resolve, reject];
+  }
 
-	return [Suspender, suspend];
+  return [Suspender, suspend];
 }

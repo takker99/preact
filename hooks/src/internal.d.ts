@@ -1,8 +1,8 @@
 import {
-	Component as PreactComponent,
-	PreactContext
-} from '../../src/internal';
-import { Reducer } from '.';
+  Component as PreactComponent,
+  PreactContext,
+} from "../../src/internal";
+import { Reducer } from ".";
 
 export { PreactContext };
 
@@ -26,50 +26,50 @@ export type Hook = (...args: HookArgs[]) => HookReturnValue;
 // Hook tracking
 
 export interface ComponentHooks {
-	/** The list of hooks a component uses */
-	_list: HookState[];
-	/** List of Effects to be invoked after the next frame is rendered */
-	_pendingEffects: EffectHookState[];
+  /** The list of hooks a component uses */
+  _list: HookState[];
+  /** List of Effects to be invoked after the next frame is rendered */
+  _pendingEffects: EffectHookState[];
 }
 
 export interface Component extends PreactComponent<any, any> {
-	__hooks?: ComponentHooks;
+  __hooks?: ComponentHooks;
 }
 
 export type HookState =
-	| EffectHookState
-	| MemoHookState
-	| ReducerHookState
-	| ContextHookState
-	| ErrorBoundaryHookState;
+  | EffectHookState
+  | MemoHookState
+  | ReducerHookState
+  | ContextHookState
+  | ErrorBoundaryHookState;
 
 export type Effect = () => void | Cleanup;
 export type Cleanup = () => void;
 
 export interface EffectHookState {
-	_value?: Effect;
-	_args?: any[];
-	_cleanup?: Cleanup | void;
+  _value?: Effect;
+  _args?: any[];
+  _cleanup?: Cleanup | void;
 }
 
 export interface MemoHookState {
-	_value?: any;
-	_args?: any[];
-	_factory?: () => any;
+  _value?: any;
+  _args?: any[];
+  _factory?: () => any;
 }
 
 export interface ReducerHookState {
-	_value?: any;
-	_component?: Component;
-	_reducer?: Reducer<any, any>;
+  _value?: any;
+  _component?: Component;
+  _reducer?: Reducer<any, any>;
 }
 
 export interface ContextHookState {
-	/** Whether this hooks as subscribed to updates yet */
-	_value?: boolean;
-	_context?: PreactContext;
+  /** Whether this hooks as subscribed to updates yet */
+  _value?: boolean;
+  _context?: PreactContext;
 }
 
 export interface ErrorBoundaryHookState {
-	_value?: (error: any) => void;
+  _value?: (error: any) => void;
 }

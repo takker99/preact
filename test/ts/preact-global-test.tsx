@@ -1,4 +1,4 @@
-import { createElement } from '../../src';
+import { createElement } from "../../src";
 
 // Test that preact types are available via the global `preact` namespace.
 

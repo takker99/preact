@@ -1,5 +1,5 @@
-import { createElement } from 'preact';
-import styled, { css } from 'styled-components';
+import { createElement } from "preact";
+import styled, { css } from "styled-components";
 
 const Button = styled.button`
 	background: transparent;
@@ -9,9 +9,9 @@ const Button = styled.button`
 	margin: 0.5em 1em;
 	padding: 0.25em 1em;
 
-	${props =>
-		props.primary &&
-		css`
+	${(props) =>
+  props.primary &&
+  css`
 			background: palevioletred;
 			color: white;
 		`}
@@ -22,10 +22,10 @@ const Container = styled.div`
 `;
 
 export default function StyledComp() {
-	return (
-		<Container>
-			<Button>Normal Button</Button>
-			<Button primary>Primary Button</Button>
-		</Container>
-	);
+  return (
+    <Container>
+      <Button>Normal Button</Button>
+      <Button primary>Primary Button</Button>
+    </Container>
+  );
 }

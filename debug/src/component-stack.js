@@ -1,4 +1,4 @@
-import { options, Fragment } from 'preact';
+import { Fragment, options } from "preact";
 
 /**
  * Get human readable name of the component/dom node
@@ -7,15 +7,15 @@ import { options, Fragment } from 'preact';
  * @returns {string}
  */
 export function getDisplayName(vnode) {
-	if (vnode.type === Fragment) {
-		return 'Fragment';
-	} else if (typeof vnode.type == 'function') {
-		return vnode.type.displayName || vnode.type.name;
-	} else if (typeof vnode.type == 'string') {
-		return vnode.type;
-	}
+  if (vnode.type === Fragment) {
+    return "Fragment";
+  } else if (typeof vnode.type == "function") {
+    return vnode.type.displayName || vnode.type.name;
+  } else if (typeof vnode.type == "string") {
+    return vnode.type;
+  }
 
-	return '#text';
+  return "#text";
 }
 
 /**
@@ -49,7 +49,7 @@ let ownerStack = [];
  * @returns {import('./internal').VNode | null}
  */
 export function getCurrentVNode() {
-	return renderStack.length > 0 ? renderStack[renderStack.length - 1] : null;
+  return renderStack.length > 0 ? renderStack[renderStack.length - 1] : null;
 }
 
 /**
@@ -65,7 +65,7 @@ let hasBabelPlugin = false;
  * @param {import('./internal').VNode} vnode
  */
 function isPossibleOwner(vnode) {
-	return typeof vnode.type == 'function' && vnode.type != Fragment;
+  return typeof vnode.type == "function" && vnode.type != Fragment;
 }
 
 /**
@@ -74,28 +74,28 @@ function isPossibleOwner(vnode) {
  * @returns {string}
  */
 export function getOwnerStack(vnode) {
-	const stack = [vnode];
-	let next = vnode;
-	while (next._owner != null) {
-		stack.push(next._owner);
-		next = next._owner;
-	}
+  const stack = [vnode];
+  let next = vnode;
+  while (next._owner != null) {
+    stack.push(next._owner);
+    next = next._owner;
+  }
 
-	return stack.reduce((acc, owner) => {
-		acc += `  in ${getDisplayName(owner)}`;
+  return stack.reduce((acc, owner) => {
+    acc += `  in ${getDisplayName(owner)}`;
 
-		const source = owner.__source;
-		if (source) {
-			acc += ` (at ${source.fileName}:${source.lineNumber})`;
-		} else if (!hasBabelPlugin) {
-			hasBabelPlugin = true;
-			console.warn(
-				'Add @babel/plugin-transform-react-jsx-source to get a more detailed component stack. Note that you should not add it to production builds of your App for bundle size reasons.'
-			);
-		}
+    const source = owner.__source;
+    if (source) {
+      acc += ` (at ${source.fileName}:${source.lineNumber})`;
+    } else if (!hasBabelPlugin) {
+      hasBabelPlugin = true;
+      console.warn(
+        "Add @babel/plugin-transform-react-jsx-source to get a more detailed component stack. Note that you should not add it to production builds of your App for bundle size reasons.",
+      );
+    }
 
-		return (acc += '\n');
-	}, '');
+    return (acc += "\n");
+  }, "");
 }
 
 /**
@@ -104,43 +104,44 @@ export function getOwnerStack(vnode) {
  * debug messages for `this.setState` where the `vnode` is `undefined`.
  */
 export function setupComponentStack() {
-	let oldDiff = options._diff;
-	let oldDiffed = options.diffed;
-	let oldRoot = options._root;
-	let oldVNode = options.vnode;
-	let oldRender = options._render;
+  let oldDiff = options._diff;
+  let oldDiffed = options.diffed;
+  let oldRoot = options._root;
+  let oldVNode = options.vnode;
+  let oldRender = options._render;
 
-	options.diffed = vnode => {
-		if (isPossibleOwner(vnode)) {
-			ownerStack.pop();
-		}
-		renderStack.pop();
-		if (oldDiffed) oldDiffed(vnode);
-	};
+  options.diffed = (vnode) => {
+    if (isPossibleOwner(vnode)) {
+      ownerStack.pop();
+    }
+    renderStack.pop();
+    if (oldDiffed) oldDiffed(vnode);
+  };
 
-	options._diff = vnode => {
-		if (isPossibleOwner(vnode)) {
-			renderStack.push(vnode);
-		}
-		if (oldDiff) oldDiff(vnode);
-	};
+  options._diff = (vnode) => {
+    if (isPossibleOwner(vnode)) {
+      renderStack.push(vnode);
+    }
+    if (oldDiff) oldDiff(vnode);
+  };
 
-	options._root = (vnode, parent) => {
-		ownerStack = [];
-		if (oldRoot) oldRoot(vnode, parent);
-	};
+  options._root = (vnode, parent) => {
+    ownerStack = [];
+    if (oldRoot) oldRoot(vnode, parent);
+  };
 
-	options.vnode = vnode => {
-		vnode._owner =
-			ownerStack.length > 0 ? ownerStack[ownerStack.length - 1] : null;
-		if (oldVNode) oldVNode(vnode);
-	};
+  options.vnode = (vnode) => {
+    vnode._owner = ownerStack.length > 0
+      ? ownerStack[ownerStack.length - 1]
+      : null;
+    if (oldVNode) oldVNode(vnode);
+  };
 
-	options._render = vnode => {
-		if (isPossibleOwner(vnode)) {
-			ownerStack.push(vnode);
-		}
+  options._render = (vnode) => {
+    if (isPossibleOwner(vnode)) {
+      ownerStack.push(vnode);
+    }
 
-		if (oldRender) oldRender(vnode);
-	};
+    if (oldRender) oldRender(vnode);
+  };
 }
